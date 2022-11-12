@@ -1,7 +1,7 @@
 
 #' Square
 #'
-#' @param x
+#' @param x the param
 #'
 #' @return square of x
 #' @export

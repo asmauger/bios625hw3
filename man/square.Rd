@@ -7,7 +7,7 @@
 square(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{the param}
 }
 \value{
 square of x
