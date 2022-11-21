@@ -19,4 +19,5 @@ Config/testthat/edition: 3
 RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Imports: 
-    dplyr
+    dplyr,
+    stats

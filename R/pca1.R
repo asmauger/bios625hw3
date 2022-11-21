@@ -33,7 +33,6 @@
 #' summary(p3)
 
 pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
-  require(dplyr)
   # allow user to avoid specifying 'formula=' in function call
   if(class(x)[1]=='formula' & is.null(formula)) {
     formula = x
@@ -43,7 +42,7 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
     # if formula is specified:
   if(is.null(formula)==F){
     # check if formula specifies a response
-    if(attr(terms(formula), 'response') == 1) stop('error in formula; formula should not have response')
+    if(attr(stats::terms(formula), 'response') == 1) stop('error in formula; formula should not have response')
     # check if data were specified
     if(is.null(data)) stop('must specify dataframe for formula')
     df = as.data.frame(data)
@@ -54,7 +53,7 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
       df = df[subset,]
     }
     # apply formula to dataframe
-    x1 = model.frame(formula, df)
+    x1 = stats::model.frame(formula, df)
   } else { # if formula was not specified:
     x1 = as.data.frame(x)
     # subset dataframe rows if subset is specified
@@ -64,7 +63,7 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
       x1 = x1[subset,]
     }
     # drop rows containing NA values
-    x1 = na.omit(x1)
+    x1 = stats::na.omit(x1)
   }
     # warn user if NAs were removed
   if(length(attr(x1, 'na.action'))!=0) warning(paste(length(attr(x1, 'na.action')), 'rows were removed due to missing values'))
@@ -79,11 +78,11 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
   x1 = .prepdata()
   # save extras (mean, scale) for the return list
   center = colMeans(x1)
-  scalefactor = apply(x1, 2, sd)
+  scalefactor = apply(x1, 2, stats::sd)
   # scaling to 0 mean and unit variance
   .scale = function(x) {
     # mean center and divide by sdev
-    x1 = x %>% mutate(across(everything(),~(.x-mean(.x))/sd(.x)))
+    x1 = dplyr::mutate(x, dplyr::across(dplyr::everything(),~(.x-mean(.x))/sd(.x)))
     return(x1)
   }
   if(scale) x1 = .scale(x=x1)
