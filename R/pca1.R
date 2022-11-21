@@ -112,9 +112,8 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
 
   return(result)
 }
-
 #'@export
-print.pca = function(x) print(x[c(3, 4)]) # define custom print to avoid printing the entire rotated data matrix
+print.pca = function(x, ...) print(x[c(3, 4)]) # define custom print to avoid printing the entire rotated data matrix
 #'@export
-summary.pca = function(x) print(x[6]) # define custom summary
+summary.pca = function(object, ...) print(object[6]) # define custom summary
 
