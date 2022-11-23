@@ -10,8 +10,8 @@ test_that('pc check works', {
 
 test_that('scale check works', {
   p1 = pca(iris[,-5])
-  expect_error(scoreplot(p1, pc=c(1,2), score='a'))
-  expect_error(scoreplot(p1, pc=c(1,2), score=c(1,0)))
+  expect_error(scoreplot(p1, pc=c(1,2), scale='a'))
+  expect_error(scoreplot(p1, pc=c(1,2), scale=c(1,0)))
 })
 
 test_that('grouping check works', {

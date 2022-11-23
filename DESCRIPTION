@@ -4,8 +4,10 @@ Title: Principal Components Analysis
 Version: 0.1.0
 Author: Abby Mauger
 Maintainer: Abby Mauger <asmauger@umich.edu>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Computes principal components from a data matrix and provides two plotting functions.
+    pca() carries out a principal component analysis using singular value decomposition and returns the eigenvectors, standard deviations of the PCs, and rotated data.
+    elbowplot() creates an elbow/scree plot to visualize the percent variance explained by each PC.
+    scoreplot() creates a PC score plot to visualize the rotated data.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
