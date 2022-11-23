@@ -101,8 +101,8 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
   } else x = NULL
   # summary (sdev, proportion of variance, and cumulative proportion)
   sdev_round = round(sdev, 4)
-  pvar = round(sdev/sum(sdev), 4)
-  cumvar = round(cumsum(sdev)/sum(sdev), 4)
+  pvar = round(sdev^2/sum(sdev^2), 4)
+  cumvar = round(cumsum(sdev^2)/sum(sdev^2), 4)
   summary = cbind(sdev_round, pvar, cumvar)
   colnames(summary) = c('Standard deviation', 'Proportion of Variance', "Cumulative Proportion")
   summary = t(summary)
