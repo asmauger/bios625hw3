@@ -24,7 +24,7 @@ Returns a list of class \code{pca} containing the following elements: \describe{
 \item{center}{the means of the input variables used for centering if \code{scale=T}.}
 \item{scale}{the standard deviations of the variables used for scaling if \code{scale=T}.}
 \item{sdev}{the standard deviations of the principal components.}
-\item{rotation}{a matrix of the principal components. More specifically, each column represents an eigenvector of the covariance matrix of the input data.}
+\item{rotation}{a matrix of the principal components. More specifically, the eigenvectors of the covariance matrix of the input data.}
 \item{x}{a matrix containing the rotated data if \code{retx=T}. That is, the scaled data multiplied by \code{rotation}.}
 \item{summary}{a matrix containing \code{sdev}, the proportion of variance associated with each PC, and the cumulative proportion of variance associated with each PC. Can be accessed with \code{summary()}.}
 }

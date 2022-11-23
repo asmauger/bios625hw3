@@ -14,7 +14,7 @@
 #'     \item{center}{the means of the input variables used for centering if `scale=T`.}
 #'     \item{scale}{the standard deviations of the variables used for scaling if `scale=T`.}
 #'     \item{sdev}{the standard deviations of the principal components.}
-#'     \item{rotation}{a matrix of the principal components. More specifically, each column represents an eigenvector of the covariance matrix of the input data.}
+#'     \item{rotation}{a matrix of the principal components. More specifically, the eigenvectors of the covariance matrix of the input data.}
 #'     \item{x}{a matrix containing the rotated data if `retx=T`. That is, the scaled data multiplied by `rotation`.}
 #'     \item{summary}{a matrix containing `sdev`, the proportion of variance associated with each PC, and the cumulative proportion of variance associated with each PC. Can be accessed with `summary()`.}
 #' }
@@ -115,5 +115,5 @@ pca = function(x, formula=NULL, data=NULL, subset=NULL, scale=T, retx=T) {
 #'@export
 print.pca = function(x, ...) print(x[c(3, 4)]) # define custom print to avoid printing the entire rotated data matrix
 #'@export
-summary.pca = function(object, ...) print(object[6]) # define custom summary
+summary.pca = function(object, ...) print(object[[6]]) # define custom summary
 

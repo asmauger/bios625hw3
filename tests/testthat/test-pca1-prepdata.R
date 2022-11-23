@@ -65,5 +65,5 @@ test_that('print.pca works', {
 
 test_that('summary.pca works', {
   p = pca(~Petal.Width + Sepal.Length + Petal.Length, data=iris)
-  expect_equal(summary(p), print.default(p[6]))
+  expect_equal(summary(p), print.default(p[[6]]))
 })

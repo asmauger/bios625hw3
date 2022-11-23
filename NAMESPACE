@@ -2,4 +2,6 @@
 
 S3method(print,pca)
 S3method(summary,pca)
+export(elbowplot)
 export(pca)
+export(scoreplot)
