@@ -7,7 +7,7 @@
 scoreplot(object, pc = c(1, 2), scale = 1, grouping = NULL)
 }
 \arguments{
-\item{object}{a object of class \code{pca} generated using the \code{pca()} function.}
+\item{object}{an object of class \code{pca} generated using the \code{pca()} function.}
 
 \item{pc}{a vector indicating the two principal components that should be plotted.}
 

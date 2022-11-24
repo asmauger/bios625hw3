@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/asmauger/bios625hw3/branch/main/graph/badge.svg)](https://app.codecov.io/gh/asmauger/bios625hw3?branch=main)
 <!-- badges: end -->
 
-The goal of pca is to ...
+The goal of pca is to provide a function for carrying out a principle components analysis and two plotting functions to visualize the results of the analysis.
 
 ## Installation
 
@@ -31,27 +31,35 @@ You can install the development version of pca from [GitHub](https://github.com/
 devtools::install_github("asmauger/bios625hw3")
 ```
 
-## Example
+For detailed information about how to use this package, please see the vignette and help pages. Below is a brief example that showcases the three function of this package: `pca`, `elbowplot`, and `scoreplot`.
 
-This is a basic example which shows you how to solve a common problem:
+## Example analyzing mtcars data with PCA
 
-```{r example}
+The `mtcars` dataset contains observations on 11 variables for 32 cars. We can use `pca` to find principal components and the variance explained by each component. 
+
+```{r example pca}
 library(pca)
-## basic example code
+data(mtcars)
+cars_pca = pca(~mpg + disp + hp + drat + wt + qsec, data=mtcars)
+summary(cars_pca)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+An elbowplot (or screeplot) can help us visualize the information provided in the summary from `pca`.
 
-```{r cars}
-summary(cars)
+```{r example elbowplot, fig.width=7}
+elbowplot(cars_pca)
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
+This plot shows us that the first 3 components capture most of the variation in the mtcars data.
 
-You can also embed plots, for example:
+A scoreplot allows us to visualize the mtcars data in just two dimensions using the first two principal components.
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+```{r example scoreplot, warning=FALSE, fig.width=8}
+library(ggplot2)
+library(patchwork)
+plot1 = scoreplot(cars_pca, grouping=mtcars$am) + labs(col='transmission')
+plot2 = scoreplot(cars_pca, grouping=mtcars$cyl) + labs(col='cylinders')
+plot1 + plot2
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+After coloring by the transmission type (automatic or manual), we see that the second PC (y axis) separates the cars based on transmission type. The plot coloring by number of cylinders shows us that the first component separates the cars by number of cylinders.

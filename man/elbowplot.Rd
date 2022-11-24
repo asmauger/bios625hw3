@@ -7,7 +7,7 @@
 elbowplot(object, n = "all")
 }
 \arguments{
-\item{object}{a object of class \code{pca} generated using the \code{pca()} function.}
+\item{object}{an object of class \code{pca} generated using the \code{pca()} function.}
 
 \item{n}{a single numeric value indicating the number of principal components to include in the plot.}
 }

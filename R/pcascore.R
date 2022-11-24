@@ -2,7 +2,7 @@
 #' @description
 #' Plots the rotated data from a `pca` object.
 #' It represents the projection of the original data into the space spanned by the two specified principal components.
-#' @param object a object of class `pca` generated using the `pca()` function.
+#' @param object an object of class `pca` generated using the `pca()` function.
 #' @param pc a vector indicating the two principal components that should be plotted.
 #' @param scale a number between 0 and 1 to scale the rotated data stored in `object`. The scaling procedure is the same as used in `autoplot()` for `prcomp` objects in `ggplot2`.
 #' @param grouping a vector of the same length and in the same order as the data used in `pca()` that corresponds to categories of the original data.

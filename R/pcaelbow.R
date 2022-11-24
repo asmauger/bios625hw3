@@ -2,7 +2,7 @@
 #' @description
 #' Plots the percent variance explained by each principal component from a `pca` object.
 #' As a rule of thumb, points above the 'elbow' of the plot should be retained in downstream analyses.
-#' @param object a object of class `pca` generated using the `pca()` function.
+#' @param object an object of class `pca` generated using the `pca()` function.
 #' @param n a single numeric value indicating the number of principal components to include in the plot.
 #'
 #' @return

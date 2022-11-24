@@ -10,7 +10,9 @@
 coverage](https://codecov.io/gh/asmauger/bios625hw3/branch/main/graph/badge.svg)](https://app.codecov.io/gh/asmauger/bios625hw3?branch=main)
 <!-- badges: end -->
 
-The goal of pca is to …
+The goal of pca is to provide a function for carrying out a principle
+components analysis and two plotting functions to visualize the results
+of the analysis.
 
 ## Installation
 
@@ -22,38 +24,53 @@ You can install the development version of pca from
 devtools::install_github("asmauger/bios625hw3")
 ```
 
-## Example
+For detailed information about how to use this package, please see the
+vignette and help pages. Below is a brief example that showcases the
+three function of this package: `pca`, `elbowplot`, and `scoreplot`.
 
-This is a basic example which shows you how to solve a common problem:
+## Example analyzing mtcars data with PCA
+
+The `mtcars` dataset contains observations on 11 variables for 32 cars.
+We can use `pca` to find principal components and the variance explained
+by each component.
 
 ``` r
 library(pca)
-## basic example code
+data(mtcars)
+cars_pca = pca(~mpg + disp + hp + drat + wt + qsec, data=mtcars)
+summary(cars_pca)
+#>                           PC1    PC2    PC3    PC4    PC5    PC6
+#> Standard deviation     2.0463 1.0715 0.5774 0.3929 0.3533 0.2280
+#> Proportion of Variance 0.6979 0.1914 0.0556 0.0257 0.0208 0.0087
+#> Cumulative Proportion  0.6979 0.8893 0.9448 0.9705 0.9913 1.0000
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+An elbowplot (or screeplot) can help us visualize the information
+provided in the summary from `pca`.
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+elbowplot(cars_pca)
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+<img src="man/figures/README-example elbowplot-1.png" width="100%" />
 
-You can also embed plots, for example:
+This plot shows us that the first 3 components capture most of the
+variation in the mtcars data.
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+A scoreplot allows us to visualize the mtcars data in just two
+dimensions using the first two principal components.
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+``` r
+library(ggplot2)
+library(patchwork)
+plot1 = scoreplot(cars_pca, grouping=mtcars$am) + labs(col='transmission')
+plot2 = scoreplot(cars_pca, grouping=mtcars$cyl) + labs(col='cylinders')
+plot1 + plot2
+```
+
+<img src="man/figures/README-example scoreplot-1.png" width="100%" />
+
+After coloring by the transmission type (automatic or manual), we see
+that the second PC (y axis) separates the cars based on transmission
+type. The plot coloring by number of cylinders shows us that the first
+component separates the cars by number of cylinders.

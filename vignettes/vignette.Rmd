@@ -1,5 +1,5 @@
 ---
-title: "vignette"
+title: "Principal Components Analysis Vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{vignette}
@@ -14,6 +14,162 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, warning=FALSE, message=FALSE}
 library(pca)
+library(ggplot2)
+library(bench)
+library(ggfortify)
+library(patchwork)
+library(ggbeeswarm)
+```
+
+### Introduction
+
+In this vignette, we use the `iris` and `diamond` datasets to demonstrate how to use the `pca` package to perform principal components analysis (PCA). PCA is used to analyze and visualize multidimensional data through dimensionality reduction. 
+
+Principal components are a set of orthogonal vectors that best fit the data, with the first principal component capturing the most variation, the second principal component capturing the second most variation, and so on. If the first few principal components explain most of the variation in the data, they can be kept for downstream analyses and the rest can be discarded. The original data can then be projected onto these principal components, resulting in a rotated dataset with fewer dimensions. In this way, PCA can be used for dimensionality reduction of high-dimensional data. 
+
+The `iris` dataset provides four measurements of iris flowers from three different species, with 150 observations in total. PCA is designed for numeric data, so we can use the variables `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width` in our analysis.
+
+```{r}
+data(iris)
+summary(iris)
+```
+
+### Using `pca` to compute PCs
+
+The `pca` function, the primary function of this package, is based off of the `prcomp` function in `stats`. 
+
+The only required input is the data frame or matrix that you would like to perform PCA on. The variables can be selected with a formula or by subsetting the data frame or matrix. The default output includes the standard deviations of the principal components and the rotation matrix (eigenvectors) corresponding to the principal components. 
+
+```{r}
+# Formula method
+pca(~Sepal.Length + Sepal.Width + Petal.Length + Petal.Width, data=iris)
+
+
+# Matrix/data frame method
+pca(x = iris[,-5]) # remove the factor variable ('Species')
+```
+
+Additional outputs can be accessed if you store the result as an object, including the means of the variables used for centering, the standard deviations of the variables used for scaling, and the rotated (or projected) data (if `retx=TRUE`). 
+
+Further, the standard deviations, proportion of variation, and cumulative proportion of variance for each principal component can be viewed using `summary`. 
+
+Note: mean-centering and scaling to unit variance is generally recommended for PCA, and so `scale=TRUE` by default. It can be turned off if desired.
+
+```{r}
+pca_result = pca(~Sepal.Width + Sepal.Length + Petal.Width + Petal.Length, data=iris, retx = TRUE)
+pca_result$x[1:5, 1:4] # x stores the rotated data (that is, the original data multiplied by rotation matrix)
+pca_result$center # means of input data variables
+pca_result$scale # standard deviation of input data variables
+summary(pca_result) # summary of the standard deviations and variances of the principal components
+```
+
+It is also possible to select a subset of observations to perform PCA on. The `diamonds` data contains various measurements for 53,940 round cut diamonds. We can perform PCA on the first 10,000 diamonds.
+
+```{r}
+data(diamonds)
+pca(~price+carat+depth+table, data=diamonds, subset=c(1:10000))
+```
+
+### Using `elbowplot` to visualize variance explained by PCs
+
+`elbowplot` plots the variance explained by each PC. It is also referred to as a scree plot. The main input is the object created by `pca`. You can also specify the number of PCs to plot, which can be useful for high-dimensional data with 50+ principal components.
+
+```{r, fig.width=7}
+pca_1 = pca(x=iris[,-5])
+elbowplot(pca_1) + ggtitle('Iris Elbow Plot') 
+# Note, elbowplot creates a ggplot and so can be modified with other ggplot functions
+```
+The plot makes an elbow shape. A rule of thumb for dimensionality reduction is to keep the principal components with percent variance above the 'elbow'. From this plot, we can see that the first two components explain most of the variation in the `iris` data. 
+
+```{r, fig.width=7}
+pca_2 = pca(~price + carat + x + y + z + depth + table, data=diamonds)
+elbowplot(pca_2) + ggtitle('Diamonds Elbow Plot')
+```
+
+In the diamonds data, the elbow plot shows us that the first four principle components explain most of the variance.
+
+### Using scoreplot to visualize data in two dimensions
+
+`scoreplot` plots a projection of the original data into the space spanned by two of the principal components. The only required input is the object created by `pca`. Optionally, you can specify a different pair of principal components to use (default is PC1 and PC2) and you can adjust the scaling. In addition, te data points can be colored by different groups (for instance, flower species in the `iris` data) to investigate whether the principal components capture variation that separates the groups.
+
+The labels on the axes indicate the proportion of variation explained by each PC.
+
+```{r, fig.width=7}
+scoreplot(pca_1, pc=c(1,2)) # first two PCs of the iris data
+scoreplot(pca_1, pc=c(1,2), grouping=iris[,5]) # now color by group
+```
+
+Sometimes, groups of interest may not be separated by the first two components, but by some other combination of components. We can easily plot all the combinations of principal components to see different representations of the data.
+
+```{r, fig.width=12, fig.height=7}
+pcs = combn(x=1:4, m=2)
+plot_list = vector("list", ncol(pcs))
+for(i in 1:ncol(pcs)) {
+    plot_list[[i]] = scoreplot(pca_1, pc=pcs[,i], grouping=iris[,5])
+ }
+wrap_plots(plot_list)
+```
+
+Here, it appears that most of the difference between the three species is capture by the first component, so the three top plots, where PC1 is plotted against the other PCs, work well.
+
+
+### Comparing `pca` with `stats::prcomp`
+
+We can compare the speed of the `pca` function to the speed of the `stats::prcomp` function using `bench::mark` and the `diamonds` dataset, which has over 50,000 observations.
+
+```{r, fig.width=7}
+data(diamonds)
+dim(diamonds)
+formula = ~ carat + depth + table + price
+comparison = bench::mark(pca(formula, data=diamonds), stats::prcomp(formula, data=diamonds, scale=TRUE), check=FALSE)
+plot(comparison) 
+```
+
+The results of `bench::mark` are plotted above. Based on this plot, the times for `pca` and `stats::prcomp` seem to be similar. 
+
+
+We can evaluate the accuracy of `pca` using `all.equal`.
+
+```{r}
+pca_test = pca(formula, data=diamonds)
+pca_prcomp = stats::prcomp(formula, data=diamonds, scale=TRUE)
+all.equal(pca_test$x, pca_prcomp$x) # rotated values are the same
+all.equal(pca_test$rotation, pca_prcomp$rotation) # the rotation matrices are the same
+# By visual inspection, the summaries are the same as well.
+summary(pca_test)
+summary(pca_prcomp)
+
+```
+
+We can also compare `pca` and `stats::prcomp` with a smaller, simulated dataset. `pca` is roughly 10x slower than `prcomp` for this smaller dataset, but is still reasonably fast. 
+
+```{r, fig.width=7}
+set.seed(349832)
+x = rnorm(1000, 500, 20)
+dim(x) = c(100, 10)
+comparison2 = bench::mark(pca(x), stats::prcomp(x, scale=TRUE), check=FALSE)
+plot(comparison2)
+```
+
+### Comparing `scoreplot` with `autoplot`
+
+`scoreplot` (from this package) and `autoplot` (from `ggplot2`/`ggfortify`) should create identical plots of the rotated and scaled data from `pca` and `prcomp`, respectively. We can check this using the `iris` dataset.
+
+```{r, fig.width=7, fig.height=5}
+formula = ~Petal.Length + Petal.Width + Sepal.Length + Sepal.Width
+p1 = pca(formula, data=iris)
+p2 = prcomp(formula, data=iris, scale=TRUE)
+plot_pca = scoreplot(p1, grouping=iris[,5]) + labs(title='scoreplot')
+plot_prcomp = autoplot(p2, data=iris, colour='Species') + labs(title='autoplot')
+plot_pca / plot_prcomp
+```
+
+Both methods can turn off scaling by setting scale to 0. Now, the rotated (projected) x values are plotted without adjustment.
+
+```{r, fig.width=7, fig.height=5}
+plot_pca2 = scoreplot(p1, grouping=iris[,5], scale=0) + labs(title='scoreplot, scale = 0')
+plot_prcomp2 = autoplot(p2, data=iris, colour='Species', scale = 0) + labs(title='autoplot, scale = 0')
+plot_pca2 / plot_prcomp2
 ```
