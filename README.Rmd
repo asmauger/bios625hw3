@@ -46,7 +46,7 @@ summary(cars_pca)
 
 An elbowplot (or screeplot) can help us visualize the information provided in the summary from `pca`.
 
-```{r example elbowplot, fig.width=7}
+```{r example-elbowplot, fig.width=7}
 elbowplot(cars_pca)
 ```
 
@@ -54,7 +54,7 @@ This plot shows us that the first 3 components capture most of the variation in 
 
 A scoreplot allows us to visualize the mtcars data in just two dimensions using the first two principal components.
 
-```{r example scoreplot, warning=FALSE, fig.width=8}
+```{r example-scoreplot, warning=FALSE, fig.width=8}
 library(ggplot2)
 library(patchwork)
 plot1 = scoreplot(cars_pca, grouping=mtcars$am) + labs(col='transmission')

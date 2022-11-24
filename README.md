@@ -52,7 +52,7 @@ provided in the summary from `pca`.
 elbowplot(cars_pca)
 ```
 
-<img src="man/figures/README-example elbowplot-1.png" width="100%" />
+<img src="man/figures/README-example-elbowplot-1.png" width="100%" />
 
 This plot shows us that the first 3 components capture most of the
 variation in the mtcars data.
@@ -68,7 +68,7 @@ plot2 = scoreplot(cars_pca, grouping=mtcars$cyl) + labs(col='cylinders')
 plot1 + plot2
 ```
 
-<img src="man/figures/README-example scoreplot-1.png" width="100%" />
+<img src="man/figures/README-example-scoreplot-1.png" width="100%" />
 
 After coloring by the transmission type (automatic or manual), we see
 that the second PC (y axis) separates the cars based on transmission
