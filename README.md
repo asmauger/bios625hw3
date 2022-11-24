@@ -21,7 +21,7 @@ You can install the development version of pca from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("asmauger/bios625hw3")
+devtools::install_github("asmauger/bios625hw3", build_vignettes=T)
 ```
 
 For detailed information about how to use this package, please see the
